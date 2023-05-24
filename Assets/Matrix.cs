@@ -13,6 +13,8 @@ public class Matrix<T> : IEnumerable<T>
     {
         //IMPLEMENTAR: constructor
         matrix = new T[width, height];
+        Width  = width;
+        Height = height;
     }
 
 	public Matrix(T[,] copyFrom)
@@ -26,10 +28,11 @@ public class Matrix<T> : IEnumerable<T>
         
     }
 
-	public Matrix<T> Clone() {
-        Matrix<T> aux = new Matrix<T>(Width, Height);
+	public Matrix<T> Clone()
+    {
         //IMPLEMENTAR
-        return aux;
+        return new Matrix<T>(matrix);
+
     }
 
 	public void SetRangeTo(int x0, int y0, int x1, int y1, T item) {
