@@ -7,23 +7,25 @@ using System.Collections.Generic;
 public class Matrix<T> : IEnumerable<T>
 {
     //IMPLEMENTAR: ESTRUCTURA INTERNA- DONDE GUARDO LOS DATOS?
-    T[,] matrix;
+    T[,] _matrix;
 
     public Matrix(int width, int height)
     {
         //IMPLEMENTAR: constructor
-        matrix = new T[width, height];
+        _matrix = new T[width, height];
+
         Width  = width;
         Height = height;
+        Capacity= width*height;
     }
 
 	public Matrix(T[,] copyFrom)
     {
         //IMPLEMENTAR: crea una version de Matrix a partir de una matriz básica de C#
-        matrix = new T[copyFrom.GetLength(0), copyFrom.GetLength(1)];
-        for (int i = 0; i < matrix.GetLength(0); i++) 
-            for (int j = 0; j < matrix.GetLength(1); j++)
-                matrix[i,j] = copyFrom[i,j];
+        _matrix = new T[copyFrom.GetLength(0), copyFrom.GetLength(1)];
+        for (int i = 0; i < _matrix.GetLength(0); i++) 
+            for (int j = 0; j < _matrix.GetLength(1); j++)
+                _matrix[i,j] = copyFrom[i,j];
             
         
     }
@@ -31,7 +33,7 @@ public class Matrix<T> : IEnumerable<T>
 	public Matrix<T> Clone()
     {
         //IMPLEMENTAR
-        return new Matrix<T>(matrix);
+        return new Matrix<T>(_matrix);
 
     }
 
@@ -40,7 +42,7 @@ public class Matrix<T> : IEnumerable<T>
 
         for (int x = x0; x < x1; x++)       
             for (int y = y0; y < y1; y++)            
-                matrix[x,y] = item;
+                _matrix[x,y] = item;
                     
     }
 
@@ -50,7 +52,7 @@ public class Matrix<T> : IEnumerable<T>
 
         for (int x = x0; x < x1; x++)
             for (int y = y0; y < y1; y++)
-                l.Add(matrix[x,y]);
+                l.Add(_matrix[x,y]);
               
          return l;
 	}
@@ -59,11 +61,11 @@ public class Matrix<T> : IEnumerable<T>
     public T this[int x, int y] {
 		get
         {
-            return matrix[x, y];
+            return _matrix[x, y];
 		}
 		set 
         {
-            matrix[x, y] = value;
+            _matrix[x, y] = value;
         }
 	}
 
@@ -75,10 +77,9 @@ public class Matrix<T> : IEnumerable<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        int x0=0;
-        int y0=0;
-        yield return matrix[x0,y0];
-
+        for (int i = 0; i < Width; i++)        
+        for (int k = 0; k < Height; k++)
+                yield return _matrix[i, k];
     }
 
 	IEnumerator IEnumerable.GetEnumerator() {
