@@ -65,14 +65,27 @@ public class Sudoku : MonoBehaviour {
 			}
 		}
 	}
-	
 
+   
 
-	//IMPLEMENTAR
-	int watchdog = 0;
+    //IMPLEMENTAR
+    int watchdog = 0;
 	bool RecuSolve(Matrix<int> matrixParent, int x, int y, int protectMaxDepth, List<Matrix<int>> solution)
     {
-		return false;
+        while (true)
+        {
+            watchdog++;
+            if (watchdog >= 5000) 
+            {
+                Debug.Log("WatchDogBroke");
+                break;
+            }
+        }
+      
+
+
+
+        return false;
 	}
 
 
@@ -123,6 +136,8 @@ public class Sudoku : MonoBehaviour {
 
     void CreateSudoku()
     {
+        CreateNew();
+        return;
         StopAllCoroutines();
         nums = new List<int>();
         canPlayMusic = false;
@@ -217,6 +232,8 @@ public class Sudoku : MonoBehaviour {
     void CreateNew()
     {
         _createdMatrix = new Matrix<int>(Tests.validBoards[1]);
+        LockRandomCells();
+        ClearUnlocked(_createdMatrix);
         TranslateAllValues(_createdMatrix);
     }
 
