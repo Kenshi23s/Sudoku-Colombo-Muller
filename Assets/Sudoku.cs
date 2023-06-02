@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Drawing;
 
 
 public class Sudoku : MonoBehaviour {
@@ -70,18 +71,58 @@ public class Sudoku : MonoBehaviour {
 
     //IMPLEMENTAR Punto 2
     int watchdog = 0;
-	bool RecuSolve(Matrix<int> matrixParent, int x, int y, int protectMaxDepth, List<Matrix<int>> solution)
+    bool RecuSolve(Matrix<int> matrixParent, int x, int y, int protectMaxDepth, List<Matrix<int>> solution)
     {
-        while (true)
+        watchdog++;
+
+        if (watchdog >= 10000)
         {
-            watchdog++;
-            if (watchdog >= 5000) 
+            Debug.LogError("WatchDogBroke");
+            return false;
+        }
+
+        if (_board[x, y].locked)
+        {
+            Debug.Log($"Casiillero {x},{y} Bloqueado");
+            x++;
+            if (x >= matrixParent.Width)
             {
-                Debug.Log("WatchDogBroke");
-                break;
+                x = 0;
+                y++;
+                if (y >= matrixParent.Height)
+                {
+                    return true;
+                }
             }
-        }   
-        
+            return RecuSolve(matrixParent, x, y,protectMaxDepth,solution);
+        }
+
+        for (int i = 1; i <9; i++)
+        {
+            if (CanPlaceValue(matrixParent, i, x, y))
+            {
+                matrixParent[x, y] = i;
+                Debug.Log($"Posicione el valor en {i} en {x},{y}");
+                TranslateAllValues(matrixParent);
+                x++;
+                if (x >= matrixParent.Width)
+                {
+                    x = 0;
+                    y++;
+                  
+                    if (y >= matrixParent.Height)
+                    {
+                        matrixParent[x, y] = i;
+                        return true;
+                    }
+                }
+                return RecuSolve(matrixParent, x, y, protectMaxDepth, solution);
+                
+
+            }
+
+        }
+
         //chequear si el casillero esta bloqueado o no 
         //if(_board[x,y[.locked == true)
         //si es verdadero ir al sig casillero directamente
@@ -96,10 +137,73 @@ public class Sudoku : MonoBehaviour {
 
         //si veo q no puedo poner ningun numero en un casillero, volver hacia atras
         //para corregir los anteriores y asi poder poner algo en el actual
-        
+
 
         return false;
-	}
+    }
+    int step = 0;
+    //bool RecuSolve(Matrix<int> matrixParent, int x = 0, int y = 0)
+    //{
+       
+    //    watchdog++;
+      
+    //    if (watchdog >= 10000)
+    //    {
+    //       Debug.LogError("WatchDogBroke");
+    //       return false;
+    //    }
+
+    //    if (_board[x, y].locked)
+    //    {
+    //        return ContinueRecur(matrixParent, x, y);
+    //    }
+
+    //    for (int i = 1; i <= 9; i++)
+    //    {
+    //        if (CanPlaceValue(matrixParent,i,x,y))
+    //        {
+    //            if (!ContinueRecur(matrixParent,x,y))
+    //            {
+    //                step++;
+    //                Debug.Log($"Posiciono el valor {i} en {x},{y} ");
+    //                matrixParent[x, y] = i;
+    //                return ContinueRecur(matrixParent, x, y);
+    //            }
+
+    //        }
+           
+    //    }
+
+       
+
+
+
+
+
+
+
+    //    //chequear si el casillero esta bloqueado o no 
+
+    //    //si es verdadero ir al sig casillero directamente
+
+
+    //    //hacer bucle para probar todos los valores q pueden ir (probar de 1 a 9 ya ta)
+    //    //cuadno devuelva verdadero: matrixParent[x,y[ = igualar a ese numero que dio true.
+
+    //    //ahora que haga lo mismo pero en el casillero de al lado.
+    //    //RecuSolve(matrixParent,x++,y,protectMaxDepth, solution); 
+    //    //si terminaste de recorrer todo x e y, devolver true.
+
+    //    //si veo q no puedo poner ningun numero en un casillero, volver hacia atras
+    //    //para corregir los anteriores y asi poder poner algo en el actual
+
+
+    //    return false;
+    //}
+
+  
+
+   
 
 
     void OnAudioFilterRead(float[] array, int channels)
@@ -128,11 +232,24 @@ public class Sudoku : MonoBehaviour {
         yield return new WaitForSeconds(stepDuration);
     }
 
-	void Update () {
-		if(Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1))
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1))
             SolvedSudoku();
-        else if(Input.GetKeyDown(KeyCode.C) || Input.GetMouseButtonDown(0)) 
-            CreateSudoku();	
+        else if (Input.GetKeyDown(KeyCode.C) || Input.GetMouseButtonDown(0))
+        {
+            CreateSudoku();
+            Debug.Log(_createdMatrix.Width+" " + _createdMatrix.Height);
+            if (RecuSolve(_createdMatrix,0,0,0,new List<Matrix<int>>()))
+            {
+                Debug.Log("Se pudo resolver");
+            }
+            else
+            {
+                Debug.Log("No se pudo resolver");
+            }
+           
+        }
+           
 	}
 
 	//modificar lo necesario para que funcione.
@@ -247,7 +364,7 @@ public class Sudoku : MonoBehaviour {
     }
     void CreateNew()
     {
-        _createdMatrix = new Matrix<int>(Tests.validBoards[1]);
+        _createdMatrix = new Matrix<int>(Tests.validBoards[Tests.validBoards.Length-1]);
         LockRandomCells();
         ClearUnlocked(_createdMatrix);
         TranslateAllValues(_createdMatrix);
