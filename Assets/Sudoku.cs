@@ -68,7 +68,7 @@ public class Sudoku : MonoBehaviour {
 
    
 
-    //IMPLEMENTAR
+    //IMPLEMENTAR Punto 2
     int watchdog = 0;
 	bool RecuSolve(Matrix<int> matrixParent, int x, int y, int protectMaxDepth, List<Matrix<int>> solution)
     {
@@ -80,10 +80,23 @@ public class Sudoku : MonoBehaviour {
                 Debug.Log("WatchDogBroke");
                 break;
             }
-        }
-      
+        }   
+        
+        //chequear si el casillero esta bloqueado o no 
+        //if(_board[x,y[.locked == true)
+        //si es verdadero ir al sig casillero directamente
 
+        //if(CanPlaceValue(matrixParent, valor q quiero poner, posX, posY)
+        //hacer bucle para probar todos los valores q pueden ir (probar de 1 a 9 ya ta)
+        //cuadno devuelva verdadero: matrixParent[x,y[ = igualar a ese numero que dio true.
 
+        //ahora que haga lo mismo pero en el casillero de al lado.
+        //RecuSolve(matrixParent,x++,y,protectMaxDepth, solution); 
+        //si terminaste de recorrer todo x e y, devolver true.
+
+        //si veo q no puedo poner ningun numero en un casillero, volver hacia atras
+        //para corregir los anteriores y asi poder poner algo en el actual
+        
 
         return false;
 	}
@@ -110,7 +123,9 @@ public class Sudoku : MonoBehaviour {
 	//IMPLEMENTAR - punto 3
 	IEnumerator ShowSequence(List<Matrix<int>> seq)
     {
-        yield return new WaitForSeconds(0);
+        //notas
+        //TranslateAllValues(seq[indice[)
+        yield return new WaitForSeconds(stepDuration);
     }
 
 	void Update () {
@@ -131,6 +146,7 @@ public class Sudoku : MonoBehaviour {
         long mem = System.GC.GetTotalMemory(true);
         memory = string.Format("MEM: {0:f2}MB", mem / (1024f * 1024f));
         canSolve = result ? " VALID" : " INVALID";
+        //hacer TranslateAllValues(_createdMatrix); por ahora. pq para el punto 3 hay q cambiarlo pq pide con delay
 		//???
     }
 
