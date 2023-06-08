@@ -97,13 +97,14 @@ public class Sudoku : MonoBehaviour {
             return RecuSolve(matrixParent, x, y,protectMaxDepth,solution);
         }
 
-        for (int i = 1; i <9; i++)
+        for (int i = 1; i < 9; i++)
         {
             if (CanPlaceValue(matrixParent, i, x, y))
             {
                 matrixParent[x, y] = i;
+                solution.Add(matrixParent);
                 Debug.Log($"Posicione el valor en {i} en {x},{y}");
-                TranslateAllValues(matrixParent);
+              
                 x++;
                 if (x >= matrixParent.Width)
                 {
