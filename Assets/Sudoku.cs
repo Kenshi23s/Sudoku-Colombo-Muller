@@ -97,13 +97,16 @@ public class Sudoku : MonoBehaviour {
             return RecuSolve(matrixParent, x, y,protectMaxDepth,solution);
         }
 
+
+        //si no puedo poner ningun numero en un casillero, antes de devolver falso, igualar el casillero a 0
         for (int i = 1; i < 9; i++)
         {
             if (CanPlaceValue(matrixParent, i, x, y))
             {
                 matrixParent[x, y] = i;
+                //a la solucion no se le deberia añadir i? o por lo menos matrixparent[x,y[?
                 solution.Add(matrixParent);
-                Debug.Log($"Posicione el valor en {i} en {x},{y}");
+                Debug.Log($"Posicione el valor {i} en {x},{y}");
               
                 x++;
                 if (x >= matrixParent.Width)
@@ -122,23 +125,7 @@ public class Sudoku : MonoBehaviour {
 
             }
 
-        }
-
-        //chequear si el casillero esta bloqueado o no 
-        //if(_board[x,y[.locked == true)
-        //si es verdadero ir al sig casillero directamente
-
-        //if(CanPlaceValue(matrixParent, valor q quiero poner, posX, posY)
-        //hacer bucle para probar todos los valores q pueden ir (probar de 1 a 9 ya ta)
-        //cuadno devuelva verdadero: matrixParent[x,y[ = igualar a ese numero que dio true.
-
-        //ahora que haga lo mismo pero en el casillero de al lado.
-        //RecuSolve(matrixParent,x++,y,protectMaxDepth, solution); 
-        //si terminaste de recorrer todo x e y, devolver true.
-
-        //si veo q no puedo poner ningun numero en un casillero, volver hacia atras
-        //para corregir los anteriores y asi poder poner algo en el actual
-
+        }        
 
         return false;
     }
@@ -289,6 +276,7 @@ public class Sudoku : MonoBehaviour {
         canSolve = result ? " VALID" : " INVALID";
         feedback.text = "Pasos: " + l.Count + "/" + l.Count + " - " + memory + " - " + canSolve;
     }
+
 	void GenerateValidLine(Matrix<int> mtx, int x, int y)
 	{
 		int[]aux = new int[9];
