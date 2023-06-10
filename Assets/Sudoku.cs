@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using System.Drawing;
 
 
 public class Sudoku : MonoBehaviour {
@@ -83,7 +82,8 @@ public class Sudoku : MonoBehaviour {
 
         if (_board[x, y].locked)
         {
-            Debug.Log($"Casiillero {x},{y} Bloqueado,entro al siguiente");
+            Debug.Log($"Casiillero {x},{y} Bloqueado,entro al siguiente, su valor es {matrixParent[x,y]}");
+           
             #region  Sumo Index
             x++;
             if (x >= matrixParent.Width)
@@ -92,12 +92,14 @@ public class Sudoku : MonoBehaviour {
                 y++;
                 if (y >= matrixParent.Height)
                 {
+                    solution.Add(matrixParent.Clone());
                     return true;
                 }
+
             }
             #endregion
             solution.Add(matrixParent.Clone());
-            Debug.Log($"entr al siguiente Casiillero, el cual es {x},{y}, ya que el anterior estaba bloqueado ");
+            Debug.Log($"entra al siguiente Casiillero, el cual es {x},{y}, ya que el anterior estaba bloqueado ");
             return RecuSolve(matrixParent, x, y,protectMaxDepth,solution);
         }
 
@@ -118,7 +120,7 @@ public class Sudoku : MonoBehaviour {
                   
                     if (y >= matrixParent.Height)
                     {
-                       
+                        solution.Add(matrixParent.Clone());
                         return true;
                     }
                 }
@@ -136,14 +138,15 @@ public class Sudoku : MonoBehaviour {
                     #region  resto index
                    
                      x--;
-                   if (x < matrixParent.Width)
+                   if (x < 0)
                    {
                        x = matrixParent.Width;
                        y--;
                   
-                       if (y < matrixParent.Height)
+                       if (y < 0)
                        {
                             Debug.Log($"estoy abajo de todo, devuelvo falsoo");
+                            solution.Add(matrixParent.Clone());
                             return false;
                        }
                         matrixParent[x, y] = 0;
@@ -180,7 +183,7 @@ public class Sudoku : MonoBehaviour {
         //para corregir los anteriores y asi poder poner algo en el actual
         #endregion
 
-
+        solution.Add(matrixParent.Clone());
         return false;
     }
     int step = 0;
@@ -284,33 +287,15 @@ public class Sudoku : MonoBehaviour {
             List<Matrix<int>> z = new List<Matrix<int>>();
             if (RecuSolve(_createdMatrix,0,0,0,z))
             {
-                Debug.Log("Se pudo resolver");
-                string debug="";
-                for (int x = 0; x < z[z.Count-1].Width; x++)
-                {
-                    for (int y = 0; y< z[z.Count - 1].Height; y++)
-                    {
-                        debug += z[z.Count - 1][x, y];
-                    }
-                    debug+="\n";
-                }
-                Debug.Log(debug);
+                Debug.Log("se pudo resolver!");
+            
             }
             else
             {
                 Debug.Log("No se pudo resolver");
-                string debug = "";
-                for (int x = 0; x < z[z.Count - 1].Width; x++)
-                {
-                    for (int y = 0; y < z[z.Count - 1].Height; y++)
-                    {
-                        debug += z[z.Count - 1][x, y];
-                    }
-                    debug += "\n";
-                }
-                Debug.Log(debug);
+              
             }
-           
+            DebugMatrix(z[z.Count - 1]);
         }
            
 	}
@@ -427,12 +412,28 @@ public class Sudoku : MonoBehaviour {
     }
     void CreateNew()
     {
+        ClearBoard();
         _createdMatrix = new Matrix<int>(Tests.validBoards[Tests.validBoards.Length-1]);
+        DebugMatrix(_createdMatrix);
         LockRandomCells();
         ClearUnlocked(_createdMatrix);
         TranslateAllValues(_createdMatrix);
+        DebugMatrix(_createdMatrix);
     }
 
+    void DebugMatrix(Matrix<int> z)
+    {
+        string debug = "";
+        for (int x = 0; x < z.Width; x++)
+        {
+            for (int y = 0; y < z.Height; y++)
+            {
+                debug += z[x, y];
+            }
+            debug += "\n";
+        }
+        Debug.Log(debug);
+    }
     bool CanPlaceValue(Matrix<int> mtx, int value, int x, int y)
     {
         List<int> fila = new List<int>();
