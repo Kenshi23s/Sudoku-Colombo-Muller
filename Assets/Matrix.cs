@@ -70,6 +70,7 @@ public class Matrix<T> : IEnumerable<T>
     public T this[int x, int y] {
 		get
         {
+          
             return _matrix[x, y];
 		}
 		set 

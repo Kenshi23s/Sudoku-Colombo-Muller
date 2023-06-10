@@ -83,7 +83,8 @@ public class Sudoku : MonoBehaviour {
 
         if (_board[x, y].locked)
         {
-            Debug.Log($"Casiillero {x},{y} Bloqueado");
+            Debug.Log($"Casiillero {x},{y} Bloqueado,entro al siguiente");
+            #region  Sumo Index
             x++;
             if (x >= matrixParent.Width)
             {
@@ -94,20 +95,21 @@ public class Sudoku : MonoBehaviour {
                     return true;
                 }
             }
+            #endregion
+            solution.Add(matrixParent.Clone());
+            Debug.Log($"entr al siguiente Casiillero, el cual es {x},{y}, ya que el anterior estaba bloqueado ");
             return RecuSolve(matrixParent, x, y,protectMaxDepth,solution);
         }
 
-
-        //si no puedo poner ningun numero en un casillero, antes de devolver falso, igualar el casillero a 0
-        for (int i = 1; i < 9; i++)
+        for (int i = 1; i <= 9; i++)
         {
             if (CanPlaceValue(matrixParent, i, x, y))
             {
+               //copia, no la matrix original
+                
                 matrixParent[x, y] = i;
-                //a la solucion no se le deberia añadir i? o por lo menos matrixparent[x,y[?
-                solution.Add(matrixParent);
-                Debug.Log($"Posicione el valor {i} en {x},{y}");
-              
+                
+               #region sumo en index
                 x++;
                 if (x >= matrixParent.Width)
                 {
@@ -116,16 +118,68 @@ public class Sudoku : MonoBehaviour {
                   
                     if (y >= matrixParent.Height)
                     {
-                        matrixParent[x, y] = i;
+                       
                         return true;
                     }
                 }
-                return RecuSolve(matrixParent, x, y, protectMaxDepth, solution);
-                
+                #endregion
+
+                if(RecuSolve(matrixParent, x, y, protectMaxDepth, solution))
+                {
+                    Debug.Log($"se puede resolver el indice{x},{y} con {i}, asi que resuelvo ese indice");
+                    solution.Add(matrixParent.Clone());
+                    return true;
+                }
+                else
+                {
+                    
+                    #region  resto index
+                   
+                     x--;
+                   if (x < matrixParent.Width)
+                   {
+                       x = matrixParent.Width;
+                       y--;
+                  
+                       if (y < matrixParent.Height)
+                       {
+                            Debug.Log($"estoy abajo de todo, devuelvo falsoo");
+                            return false;
+                       }
+                        matrixParent[x, y] = 0;
+                        Debug.Log($"Entro a {x}+{y} para arreglar");
+                        return RecuSolve(matrixParent, x, y, protectMaxDepth, solution);
+                   }
+                }
+
+                #endregion
+
 
             }
+            else
+            {               
+             Debug.Log($"no puedo posicionar {i} en {x},{y}");
+                
+            }
 
-        }        
+        }
+        #region coment
+        //chequear si el casillero esta bloqueado o no 
+        //if(_board[x,y[.locked == true)
+        //si es verdadero ir al sig casillero directamente
+
+        //if(CanPlaceValue(matrixParent, valor q quiero poner, posX, posY)
+        //hacer bucle para probar todos los valores q pueden ir (probar de 1 a 9 ya ta)
+        //cuadno devuelva verdadero: matrixParent[x,y[ = igualar a ese numero que dio true.
+
+        //ahora que haga lo mismo pero en el casillero de al lado.
+        //RecuSolve(matrixParent,x++,y,protectMaxDepth, solution); 
+        //si terminaste de recorrer todo x e y, devolver true.
+
+        //si veo q no puedo poner ningun numero en un casillero, volver hacia atras
+        //para corregir los anteriores y asi poder poner algo en el actual
+        #endregion
+
 
         return false;
     }
@@ -227,13 +281,34 @@ public class Sudoku : MonoBehaviour {
         {
             CreateSudoku();
             Debug.Log(_createdMatrix.Width+" " + _createdMatrix.Height);
-            if (RecuSolve(_createdMatrix,0,0,0,new List<Matrix<int>>()))
+            List<Matrix<int>> z = new List<Matrix<int>>();
+            if (RecuSolve(_createdMatrix,0,0,0,z))
             {
                 Debug.Log("Se pudo resolver");
+                string debug="";
+                for (int x = 0; x < z[z.Count-1].Width; x++)
+                {
+                    for (int y = 0; y< z[z.Count - 1].Height; y++)
+                    {
+                        debug += z[z.Count - 1][x, y];
+                    }
+                    debug+="\n";
+                }
+                Debug.Log(debug);
             }
             else
             {
                 Debug.Log("No se pudo resolver");
+                string debug = "";
+                for (int x = 0; x < z[z.Count - 1].Width; x++)
+                {
+                    for (int y = 0; y < z[z.Count - 1].Height; y++)
+                    {
+                        debug += z[z.Count - 1][x, y];
+                    }
+                    debug += "\n";
+                }
+                Debug.Log(debug);
             }
            
         }
@@ -276,7 +351,6 @@ public class Sudoku : MonoBehaviour {
         canSolve = result ? " VALID" : " INVALID";
         feedback.text = "Pasos: " + l.Count + "/" + l.Count + " - " + memory + " - " + canSolve;
     }
-
 	void GenerateValidLine(Matrix<int> mtx, int x, int y)
 	{
 		int[]aux = new int[9];
