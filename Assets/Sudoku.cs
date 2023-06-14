@@ -107,9 +107,11 @@ public class Sudoku : MonoBehaviour {
         {
             if (CanPlaceValue(matrixParent, i, x, y))
             {
-               //copia, no la matrix original
-                
-                matrixParent[x, y] = i;
+                //copia, no la matrix original
+
+                int auxX = x;
+                int auxY = y;
+               
                 
                #region sumo en index
                 x++;
@@ -130,6 +132,7 @@ public class Sudoku : MonoBehaviour {
                 {
                     Debug.Log($"se puede resolver el indice{x},{y} con {i}, asi que resuelvo ese indice");
                     solution.Add(matrixParent.Clone());
+                    matrixParent[auxX, auxY] = i;
                     return true;
                 }
                 else
@@ -156,8 +159,6 @@ public class Sudoku : MonoBehaviour {
                 }
 
                 #endregion
-
-
             }
             else
             {               
@@ -187,64 +188,6 @@ public class Sudoku : MonoBehaviour {
         return false;
     }
     int step = 0;
-    //bool RecuSolve(Matrix<int> matrixParent, int x = 0, int y = 0)
-    //{
-       
-    //    watchdog++;
-      
-    //    if (watchdog >= 10000)
-    //    {
-    //       Debug.LogError("WatchDogBroke");
-    //       return false;
-    //    }
-
-    //    if (_board[x, y].locked)
-    //    {
-    //        return ContinueRecur(matrixParent, x, y);
-    //    }
-
-    //    for (int i = 1; i <= 9; i++)
-    //    {
-    //        if (CanPlaceValue(matrixParent,i,x,y))
-    //        {
-    //            if (!ContinueRecur(matrixParent,x,y))
-    //            {
-    //                step++;
-    //                Debug.Log($"Posiciono el valor {i} en {x},{y} ");
-    //                matrixParent[x, y] = i;
-    //                return ContinueRecur(matrixParent, x, y);
-    //            }
-
-    //        }
-           
-    //    }
-
-       
-
-
-
-
-
-
-
-    //    //chequear si el casillero esta bloqueado o no 
-
-    //    //si es verdadero ir al sig casillero directamente
-
-
-    //    //hacer bucle para probar todos los valores q pueden ir (probar de 1 a 9 ya ta)
-    //    //cuadno devuelva verdadero: matrixParent[x,y[ = igualar a ese numero que dio true.
-
-    //    //ahora que haga lo mismo pero en el casillero de al lado.
-    //    //RecuSolve(matrixParent,x++,y,protectMaxDepth, solution); 
-    //    //si terminaste de recorrer todo x e y, devolver true.
-
-    //    //si veo q no puedo poner ningun numero en un casillero, volver hacia atras
-    //    //para corregir los anteriores y asi poder poner algo en el actual
-
-
-    //    return false;
-    //}
 
   
 
