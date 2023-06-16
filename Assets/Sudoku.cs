@@ -217,6 +217,7 @@ public class Sudoku : MonoBehaviour {
     {
         //notas
         //TranslateAllValues(seq[indice[)
+        //for haciendo translateallvalues por cada indice de la lista de la solucion
         yield return new WaitForSeconds(stepDuration);
     }
 
@@ -254,6 +255,7 @@ public class Sudoku : MonoBehaviour {
         long mem = System.GC.GetTotalMemory(true);
         memory = string.Format("MEM: {0:f2}MB", mem / (1024f * 1024f));
         canSolve = result ? " VALID" : " INVALID";
+        //translateallvalues pasa todos los valores de la matriz a la UI
         //hacer TranslateAllValues(_createdMatrix); por ahora. pq para el punto 3 hay q cambiarlo pq pide con delay
 		//???
     }
