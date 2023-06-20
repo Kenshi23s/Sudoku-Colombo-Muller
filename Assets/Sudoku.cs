@@ -108,19 +108,19 @@ public class Sudoku : MonoBehaviour {
             if (CanPlaceValue(matrixParent, i, x, y))
             {
                 //copia, no la matrix original
-
+                matrixParent[x, y] = i;
                 int auxX = x;
                 int auxY = y;
-               
-                
-               #region sumo en index
-                x++;
-                if (x >= matrixParent.Width)
+
+
+                #region sumo en index
+                auxX++;
+                if (auxX >= matrixParent.Width)
                 {
-                    x = 0;
-                    y++;
+                    auxX = 0;
+                    auxY = y+1;
                   
-                    if (y >= matrixParent.Height)
+                    if (auxY >= matrixParent.Height)
                     {
                         solution.Add(matrixParent.Clone());
                         return true;
@@ -128,7 +128,7 @@ public class Sudoku : MonoBehaviour {
                 }
                 #endregion
 
-                if(RecuSolve(matrixParent, x, y, protectMaxDepth, solution))
+                if (RecuSolve(matrixParent, auxX, auxY, protectMaxDepth, solution))
                 {
                     Debug.Log($"se puede resolver el indice{x},{y} con {i}, asi que resuelvo ese indice");
                     solution.Add(matrixParent.Clone());
@@ -137,28 +137,29 @@ public class Sudoku : MonoBehaviour {
                 }
                 else
                 {
-                    
-                    #region  resto index
-                   
-                     x--;
-                   if (x < 0)
-                   {
-                       x = matrixParent.Width;
-                       y--;
-                  
-                       if (y < 0)
-                       {
-                            Debug.Log($"estoy abajo de todo, devuelvo falsoo");
-                            solution.Add(matrixParent.Clone());
-                            return false;
-                       }
-                        matrixParent[x, y] = 0;
-                        Debug.Log($"Entro a {x}+{y} para arreglar");
-                        return RecuSolve(matrixParent, x, y, protectMaxDepth, solution);
-                   }
+                    matrixParent[x, y] = 0; 
                 }
+                //    #region  resto index
+                   
+                //     x--;
+                //   if (x < 0)
+                //   {
+                //       x = matrixParent.Width;
+                //       y--;
+                  
+                //       if (y < 0)
+                //       {
+                //            Debug.Log($"estoy abajo de todo, devuelvo falsoo");
+                //            solution.Add(matrixParent.Clone());
+                //            return false;
+                //       }
+                //        matrixParent[x, y] = 0;
+                //        Debug.Log($"Entro a {x}+{y} para arreglar");
+                //        return RecuSolve(matrixParent, x, y, protectMaxDepth, solution);
+                //   }
+                //}
 
-                #endregion
+                //#endregion
             }
             else
             {               
