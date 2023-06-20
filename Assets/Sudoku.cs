@@ -92,13 +92,13 @@ public class Sudoku : MonoBehaviour {
                 y++;
                 if (y >= matrixParent.Height)
                 {
-                    solution.Add(matrixParent.Clone());
+                   
                     return true;
                 }
 
             }
             #endregion
-            solution.Add(matrixParent.Clone());
+            
             Debug.Log($"entra al siguiente Casiillero, el cual es {x},{y}, ya que el anterior estaba bloqueado ");
             return RecuSolve(matrixParent, x, y,protectMaxDepth,solution);
         }
@@ -109,6 +109,8 @@ public class Sudoku : MonoBehaviour {
             {
                 //copia, no la matrix original
                 matrixParent[x, y] = i;
+                solution.Add(matrixParent.Clone());
+
                 int auxX = x;
                 int auxY = y;
 
@@ -122,7 +124,7 @@ public class Sudoku : MonoBehaviour {
                   
                     if (auxY >= matrixParent.Height)
                     {
-                        solution.Add(matrixParent.Clone());
+                       
                         return true;
                     }
                 }
@@ -131,22 +133,25 @@ public class Sudoku : MonoBehaviour {
                 if (RecuSolve(matrixParent, auxX, auxY, protectMaxDepth, solution))
                 {
                     Debug.Log($"se puede resolver el indice{x},{y} con {i}, asi que resuelvo ese indice");
-                    solution.Add(matrixParent.Clone());
                     matrixParent[auxX, auxY] = i;
+                  
+
                     return true;
                 }
                 else
                 {
                     matrixParent[x, y] = 0; 
+                    solution.Add(matrixParent.Clone());
                 }
+                #region
                 //    #region  resto index
-                   
+
                 //     x--;
                 //   if (x < 0)
                 //   {
                 //       x = matrixParent.Width;
                 //       y--;
-                  
+
                 //       if (y < 0)
                 //       {
                 //            Debug.Log($"estoy abajo de todo, devuelvo falsoo");
@@ -160,10 +165,11 @@ public class Sudoku : MonoBehaviour {
                 //}
 
                 //#endregion
+                #endregion
             }
             else
             {               
-             Debug.Log($"no puedo posicionar {i} en {x},{y}");
+              Debug.Log($"no puedo posicionar {i} en {x},{y}");
                 
             }
 
@@ -185,7 +191,7 @@ public class Sudoku : MonoBehaviour {
         //para corregir los anteriores y asi poder poner algo en el actual
         #endregion
 
-        solution.Add(matrixParent.Clone());
+       
         return false;
     }
     int step = 0;
@@ -216,23 +222,29 @@ public class Sudoku : MonoBehaviour {
 	//IMPLEMENTAR - punto 3
 	IEnumerator ShowSequence(List<Matrix<int>> seq)
     {
+        for (int i = 0; i < seq.Count; i++)
+        {
+            yield return new WaitForSeconds(stepDuration);
+            TranslateAllValues(seq[i]);
+        }
         //notas
         //TranslateAllValues(seq[indice[)
         //for haciendo translateallvalues por cada indice de la lista de la solucion
-        yield return new WaitForSeconds(stepDuration);
+      
     }
 
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1))
-            SolvedSudoku();
-        else if (Input.GetKeyDown(KeyCode.C) || Input.GetMouseButtonDown(0))
+    void Update() 
+    {
+      
+        if (Input.GetKeyDown(KeyCode.C))
         {
             CreateSudoku();
             Debug.Log(_createdMatrix.Width+" " + _createdMatrix.Height);
             List<Matrix<int>> z = new List<Matrix<int>>();
             if (RecuSolve(_createdMatrix,0,0,0,z))
             {
-                Debug.Log("se pudo resolver!");
+
+                StartCoroutine(ShowSequence(z));
             
             }
             else
@@ -240,7 +252,7 @@ public class Sudoku : MonoBehaviour {
                 Debug.Log("No se pudo resolver");
               
             }
-            DebugMatrix(z[z.Count - 1]);
+            //DebugMatrix(z[z.Count - 1]);
         }
            
 	}
