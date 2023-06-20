@@ -92,13 +92,14 @@ public class Sudoku : MonoBehaviour {
                 y++;
                 if (y >= matrixParent.Height)
                 {
-                    solution.Add(matrixParent.Clone());
+                   
                     return true;
                 }
 
             }
             #endregion
-            solution.Add(matrixParent.Clone());
+            
+           
             Debug.Log($"entra al siguiente Casiillero, el cual es {x},{y}, ya que el anterior estaba bloqueado ");
             return RecuSolve(matrixParent, x, y,protectMaxDepth,solution);
         }
@@ -122,6 +123,7 @@ public class Sudoku : MonoBehaviour {
                   
                     if (auxY >= matrixParent.Height)
                     {
+                        step++;
                         solution.Add(matrixParent.Clone());
                         return true;
                     }
@@ -133,20 +135,22 @@ public class Sudoku : MonoBehaviour {
                     Debug.Log($"se puede resolver el indice{x},{y} con {i}, asi que resuelvo ese indice");
                     solution.Add(matrixParent.Clone());
                     matrixParent[auxX, auxY] = i;
+                    step++;
                     return true;
                 }
                 else
                 {
                     matrixParent[x, y] = 0; 
                 }
+                #region Obsolete
                 //    #region  resto index
-                   
+
                 //     x--;
                 //   if (x < 0)
                 //   {
                 //       x = matrixParent.Width;
                 //       y--;
-                  
+
                 //       if (y < 0)
                 //       {
                 //            Debug.Log($"estoy abajo de todo, devuelvo falsoo");
@@ -160,6 +164,7 @@ public class Sudoku : MonoBehaviour {
                 //}
 
                 //#endregion
+                #endregion
             }
             else
             {               
@@ -185,7 +190,8 @@ public class Sudoku : MonoBehaviour {
         //para corregir los anteriores y asi poder poner algo en el actual
         #endregion
 
-        solution.Add(matrixParent.Clone());
+        
+
         return false;
     }
     int step = 0;
@@ -216,10 +222,17 @@ public class Sudoku : MonoBehaviour {
 	//IMPLEMENTAR - punto 3
 	IEnumerator ShowSequence(List<Matrix<int>> seq)
     {
+      
+        for (int i = 0; i < seq.Count; i++)
+        {
+            feedback.text = "Pasos: " + i + "/" + (seq.Count-1) + " - " + memory + " - " + canSolve;
+            TranslateAllValues(seq[i]);
+            yield return new WaitForSeconds(stepDuration);
+        }
         //notas
         //TranslateAllValues(seq[indice[)
         //for haciendo translateallvalues por cada indice de la lista de la solucion
-        yield return new WaitForSeconds(stepDuration);
+        
     }
 
     void Update() {
@@ -241,6 +254,19 @@ public class Sudoku : MonoBehaviour {
               
             }
             DebugMatrix(z[z.Count - 1]);
+        }
+        else if(Input.GetKeyDown(KeyCode.V))
+        {
+            CreateSudoku();
+            Debug.Log(_createdMatrix.Width + " " + _createdMatrix.Height);
+            List<Matrix<int>> z = new List<Matrix<int>>();
+            if (RecuSolve(_createdMatrix, 0, 0, 0, z))
+            {
+                StartCoroutine(ShowSequence(z));
+                Debug.Log("se pudo resolver!");
+               
+
+            }
         }
            
 	}
@@ -363,7 +389,7 @@ public class Sudoku : MonoBehaviour {
         DebugMatrix(_createdMatrix);
         LockRandomCells();
         ClearUnlocked(_createdMatrix);
-        TranslateAllValues(_createdMatrix);
+      
         DebugMatrix(_createdMatrix);
     }
 
