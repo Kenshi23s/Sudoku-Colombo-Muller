@@ -8,7 +8,7 @@ public class Sudoku : MonoBehaviour {
 	public Cell prefabCell;
 	public Canvas canvas;
 	public Text feedback;
-	public float stepDuration = 0.05f;
+	public float stepDuration = 0.5f;
 	[Range(1, 82)]public int difficulty = 40;
 
 	Matrix<Cell> _board;
@@ -221,8 +221,7 @@ public class Sudoku : MonoBehaviour {
 
 	//IMPLEMENTAR - punto 3
 	IEnumerator ShowSequence(List<Matrix<int>> seq)
-    {
-      
+    {      
         for (int i = 0; i < seq.Count; i++)
         {
             feedback.text = "Pasos: " + i + "/" + (seq.Count-1) + " - " + memory + " - " + canSolve;
@@ -235,39 +234,29 @@ public class Sudoku : MonoBehaviour {
         
     }
 
-    void Update() {
+    void Update() 
+    {
         if (Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1))
             SolvedSudoku();
         else if (Input.GetKeyDown(KeyCode.C) || Input.GetMouseButtonDown(0))
         {
             CreateSudoku();
             Debug.Log(_createdMatrix.Width+" " + _createdMatrix.Height);
+          
             List<Matrix<int>> z = new List<Matrix<int>>();
+            /*
             if (RecuSolve(_createdMatrix,0,0,0,z))
             {
-                Debug.Log("se pudo resolver!");
-            
+                Debug.Log("se pudo resolver!");            
             }
             else
             {
                 Debug.Log("No se pudo resolver");
               
             }
+            */
             DebugMatrix(z[z.Count - 1]);
-        }
-        else if(Input.GetKeyDown(KeyCode.V))
-        {
-            CreateSudoku();
-            Debug.Log(_createdMatrix.Width + " " + _createdMatrix.Height);
-            List<Matrix<int>> z = new List<Matrix<int>>();
-            if (RecuSolve(_createdMatrix, 0, 0, 0, z))
-            {
-                StartCoroutine(ShowSequence(z));
-                Debug.Log("se pudo resolver!");
-               
-
-            }
-        }
+        }     
            
 	}
 
@@ -279,12 +268,16 @@ public class Sudoku : MonoBehaviour {
         var solution = new List<Matrix<int>>();
         watchdog = 100000;
         var result =false;//????
-        long mem = System.GC.GetTotalMemory(true);
+        long mem = System.GC.GetTotalMemory(true);       
+
+        if (RecuSolve(_createdMatrix, 0, 0, 0, solution))
+        {
+            StartCoroutine(ShowSequence(solution));
+            Debug.Log("se pudo resolver!");
+        }
+        
         memory = string.Format("MEM: {0:f2}MB", mem / (1024f * 1024f));
         canSolve = result ? " VALID" : " INVALID";
-        //translateallvalues pasa todos los valores de la matriz a la UI
-        //hacer TranslateAllValues(_createdMatrix); por ahora. pq para el punto 3 hay q cambiarlo pq pide con delay
-		//???
     }
 
     void CreateSudoku()
