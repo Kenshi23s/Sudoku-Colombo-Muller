@@ -224,8 +224,10 @@ public class Sudoku : MonoBehaviour {
     {
         for (int i = 0; i < seq.Count; i++)
         {
-            yield return new WaitForSeconds(stepDuration);
+            feedback.text = "Pasos: " + i + "/" + (seq.Count-1) + " - " + memory + " - " + canSolve;
             TranslateAllValues(seq[i]);
+            yield return new WaitForSeconds(stepDuration);
+          
         }
         //notas
         //TranslateAllValues(seq[indice[)
